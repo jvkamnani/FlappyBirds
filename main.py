@@ -50,6 +50,9 @@ def check_collision():
             if bird.y < pipe_pair.upper_pipe.y + pipe_pair.upper_pipe.height or bird.y + bird.height > pipe_pair.lower_pipe.y:
                 crashed = True
                 print(bird.x, bird.y, pipe_pair.lower_pipe.x, pipe_pair.upper_pipe.x, pipe_pair.lower_pipe.y, pipe_pair.upper_pipe.y + pipe_pair.upper_pipe.height)
+    if bird.y + bird.height >= (display_height -16):
+        crashed = True
+            
 
 def update_ground(dt):
     global ground_scroll
