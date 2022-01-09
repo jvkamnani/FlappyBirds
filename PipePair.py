@@ -9,6 +9,7 @@ class PipePair:
         self.upper_pipe.flip_vertically()
         self.upper_pipe.set_y(y_upper)
         self.lower_pipe.set_y(GAP_HEIGHT + y_upper + self.lower_pipe.height)
+        self.score_counted = False
         
     def render(self, gameDisplay):
         self.lower_pipe.render(gameDisplay)

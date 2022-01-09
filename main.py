@@ -16,6 +16,9 @@ background_looping_point = 413
 ground_looping_point = 500
 spawn_timer = 0
 scrolling = True
+not_play = True
+score = 0
+not_quit = True
 
 bird = Bird(display_width, display_height)
 pipe_pairs = []
@@ -26,7 +29,6 @@ background = pygame.image.load('D:/Flappy Birds/assets/sprites/background.png')
 ground = pygame.image.load('D:/Flappy Birds/assets/sprites/ground.png')
 crashed = False
 
-clock = pygame.time.Clock()
 
 def draw():
     pygame.display.update()
@@ -35,6 +37,10 @@ def draw():
         pipe.render(gameDisplay)
     gameDisplay.blit(ground, (-ground_scroll, display_height - 16))
     bird.render(gameDisplay)
+    score_surface = score_font.render(str(score), True, (255, 255, 255))
+    score_x = display_width/2 - score_surface.get_width()/2
+    score_y = display_height/4 - score_surface.get_height()/2
+    gameDisplay.blit(score_surface, (score_x, score_y))
 
 def update_background(dt):
     global background_scroll
@@ -49,7 +55,6 @@ def check_collision():
         if bird.x + bird.width > pipe_pair.lower_pipe.x and bird.x < pipe_pair.lower_pipe.x + pipe_pair.lower_pipe.width:
             if bird.y < pipe_pair.upper_pipe.y + pipe_pair.upper_pipe.height or bird.y + bird.height > pipe_pair.lower_pipe.y:
                 crashed = True
-                print(bird.x, bird.y, pipe_pair.lower_pipe.x, pipe_pair.upper_pipe.x, pipe_pair.lower_pipe.y, pipe_pair.upper_pipe.y + pipe_pair.upper_pipe.height)
     if bird.y + bird.height >= (display_height -16):
         crashed = True
             
@@ -73,6 +78,13 @@ def pipe_update(dt):
             pipe_pairs.pop(0)
     
     
+def update_score():
+    global score
+    for p in pipe_pairs:
+            if p.upper_pipe.x + p.upper_pipe.width < bird.x and not p.score_counted:
+                score += 1
+                p.score_counted = True
+    
 
 def update(dt):
     check_collision()
@@ -80,9 +92,20 @@ def update(dt):
     update_background(dt)
     bird.update(dt)
     pipe_update(dt)
+    update_score()
     
-    
+score_font = pygame.font.SysFont(None, 32, bold=True)
 
+while not_play:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            not_play = False
+            break
+    draw()
+
+bird.jump()
+
+clock = pygame.time.Clock()
 
 while not crashed:
     dt = clock.tick(FPS) / 1000
@@ -99,7 +122,13 @@ while not crashed:
         update(dt)
     draw()
    
-    
+while not_quit:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            not_quit = False
+            break
+    draw()    
+
 
 pygame.quit()
 quit()
